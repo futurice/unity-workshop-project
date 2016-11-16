@@ -1,33 +1,46 @@
 ﻿using UnityEngine;
 using System.Collections;
 using UnityEngine.Networking;
+using UnityEngine.UI;
 
 public class GameManager : NetworkBehaviour
 {
+	public enum GameState
+	{
+		WAITING_FOR_PLAYERS,
+		RUNNING,
+		NONE
+	}
+
 	public enum GameEvent
 	{
+		START_GAME,
+		STOP_GAME,
 		PLAYER_LEFT_SCORED,
 		PLAYER_RIGHT_SCORED,
 		NONE
 	}
 
+	[Header("Network options")]
+	[SerializeField]
+	private NetworkManager			_networkManager			= null;
+
 	[Header("Ball options")]
 	[SerializeField]
-	private Transform				_ballContainer		= null;
+	private Transform				_ballContainer			= null;
 	[SerializeField]
-	private GameObject				_ballPrefab			= null;
+	private GameObject				_ballPrefab				= null;
 	[SerializeField]
-	private float					_initialBallSpeed	= 15.0f;
-
-	[Header("Player options")]
-	[SerializeField]
-	private Transform				_playerContainer	= null;
+	private float					_initialBallSpeed		= 15.0f;
 
 	[Header("Game play options")]
 	[SerializeField]
-	private float					_scoreCooldown		= 2.0f;
+	private float					_scoreCooldown			= 2.0f;
 
-	private BallController			_currentBall		= null;
+	private GameState				_currentState			= GameState.NONE;
+	private BallController			_currentBall			= null;
+	private int						_leftPlayerScore		= 0;
+	private int						_rightPlayerScore		= 0;
 
 	#region Singleton implementation
 
@@ -76,17 +89,56 @@ public class GameManager : NetworkBehaviour
 
 	#endregion
 
-	private void Start ()
-	{
-		StartCoroutine (RespawnBall ());
-	}
+	#region Event handling
 
 	public void HandleGameEvent (GameEvent e)
 	{
-		if (e == GameEvent.PLAYER_LEFT_SCORED ||
-			e == GameEvent.PLAYER_RIGHT_SCORED)
+		if (e == GameEvent.START_GAME)
+		{
+			HandleStartGameEvent ();
+		}
+		else if (e == GameEvent.STOP_GAME)
+		{
+			HandleStopGameEvent ();
+		}
+		else if (e == GameEvent.PLAYER_LEFT_SCORED || e == GameEvent.PLAYER_RIGHT_SCORED)
 		{
 			HandlePlayerScoredEvent (e);
+		}
+	}
+
+	private void HandleStartGameEvent ()
+	{
+		_currentState = GameState.RUNNING;
+		StartCoroutine (RespawnBall ());
+	}
+
+	private void HandleStopGameEvent ()
+	{
+		_currentState = GameState.WAITING_FOR_PLAYERS;
+		DestroyBall ();
+	}
+
+	private void HandlePlayerScoredEvent (GameEvent e)
+	{
+		// Destroy the current ball
+		DestroyBall ();
+
+		// Start a timer to respawn a new ball
+		StartCoroutine (RespawnBall ());
+	}
+
+	#endregion
+
+	private void Update ()
+	{
+		if (_networkManager.numPlayers > 1 && _currentState != GameState.RUNNING)
+		{
+			HandleGameEvent (GameEvent.START_GAME);
+		}
+		else if (_networkManager.numPlayers < 2 && _currentState == GameState.RUNNING)
+		{
+			HandleGameEvent (GameEvent.STOP_GAME);
 		}
 	}
 
@@ -97,15 +149,19 @@ public class GameManager : NetworkBehaviour
 		{
 			NetworkServer.Destroy (_currentBall.gameObject);
 		}
+
+		_currentBall = null;
 	}
 
-	private void HandlePlayerScoredEvent (GameEvent e)
+	private void CreateBall ()
 	{
-		// Destroy the current ball
-		DestroyBall ();
+		// Create a new ball and spawn it across all network clients
+		GameObject newBall = Instantiate (_ballPrefab, Vector3.zero, Quaternion.identity, _ballContainer) as GameObject;
+		NetworkServer.Spawn (newBall);
 
-		// Start a timer to respawn a new ball
-		StartCoroutine (RespawnBall ());
+		// Store the reference to the ball and initialize the ball
+		_currentBall = newBall.GetComponent<BallController> ();
+		_currentBall.Init (_initialBallSpeed);
 	}
 
 	private IEnumerator RespawnBall ()
@@ -118,10 +174,6 @@ public class GameManager : NetworkBehaviour
 		// Wait for the cooldown to finish
 		yield return new WaitForSeconds (_scoreCooldown);
 
-		GameObject newBall = Instantiate (_ballPrefab, Vector3.zero, Quaternion.identity, _ballContainer) as GameObject;
-		NetworkServer.Spawn (newBall);
-
-		_currentBall = newBall.GetComponent<BallController> ();
-		_currentBall.Init (_initialBallSpeed);
+		CreateBall ();
 	}
 }
