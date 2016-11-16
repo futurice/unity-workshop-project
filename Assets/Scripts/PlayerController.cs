@@ -1,19 +1,35 @@
 ﻿using UnityEngine;
 using System.Collections;
 using UnityEngine.Networking;
+using Valve.VR;
 
-public class PlayerController : NetworkBehaviour
+public class PlayerController : MonoBehaviour
 {
-	[SerializeField]
-	private string 		_inputAxis			= "Vertical";
-	[SerializeField]
-	private float		_movementSpeed		= 30.0f;
-	[SerializeField]
-	private Color		_localPlayerColor	= Color.blue;
+	private enum InputType
+	{
+		DESKTOP,
+		VIVE,
+		HOLOLENS
+	}
 
-	private Vector3		_playerVelocity		= Vector3.zero;
-	private Rigidbody	_playerRigidbody	= null;
-	private Material	_playerMaterial		= null;
+	[Header("General options")]
+	[SerializeField]
+	private InputType					_inputType				= InputType.DESKTOP;
+	[SerializeField]
+	private float						_movementSpeed			= 30.0f;
+
+	private Vector3						_playerVelocity			= Vector3.zero;
+	private Rigidbody					_playerRigidbody		= null;
+	private Material					_playerMaterial			= null;
+
+	[Header("Vive options")]
+	[SerializeField]
+	private SteamVR_TrackedObject 		_leftController			= null;
+	[SerializeField]
+	private SteamVR_TrackedObject		_rightController		= null;
+
+	private SteamVR_Controller.Device 	_leftControllerDevice	= null;
+	private SteamVR_Controller.Device 	_rightControllerDevice	= null;
 
 	private Rigidbody PlayerRigidbody
 	{
@@ -41,23 +57,79 @@ public class PlayerController : NetworkBehaviour
 		}
 	}
 
+	private SteamVR_Controller.Device LeftControllerDevice
+	{
+		get
+		{
+			if (_leftControllerDevice == null)
+			{
+				if (_leftController != null && _leftController.index != SteamVR_TrackedObject.EIndex.None)
+				{
+					_leftControllerDevice = SteamVR_Controller.Input ((int)_leftController.index);
+				}
+			}
+
+			return _leftControllerDevice;
+		}
+	}
+
+	private SteamVR_Controller.Device RightControllerDevice
+	{
+		get
+		{
+			if (_rightControllerDevice == null)
+			{
+				if (_rightController != null && _rightController.index != SteamVR_TrackedObject.EIndex.None)
+				{
+					_rightControllerDevice = SteamVR_Controller.Input ((int)_rightController.index);
+				}
+			}
+
+			return _rightControllerDevice;
+		}
+	}
+
 	private void FixedUpdate ()
 	{
-		// Only the local player should process input
-		if (!isLocalPlayer)
+		if (_inputType == InputType.DESKTOP)
 		{
-			return;
+			// Get the movement on the vertical axis and convert that to
+			// movement speed of the Rigidbody
+			float v = Input.GetAxisRaw ("Vertical");
+			MovePlayer (v);
 		}
+		else if (_inputType == InputType.VIVE)
+		{
+			HandleViveControllerDeviceInput (LeftControllerDevice);
+			HandleViveControllerDeviceInput (RightControllerDevice);
+		}
+		else if (_inputType == InputType.HOLOLENS)
+		{
+			// TODO
+		}
+	}
 
-		// Get the movement on the vertical axis and convert that to
-		// movement speed of the Rigidbody
-		float v = Input.GetAxisRaw (_inputAxis);
+	private void MovePlayer (float v)
+	{
 		_playerVelocity.z = v * _movementSpeed;
 		PlayerRigidbody.velocity = _playerVelocity;
 	}
 
-	public override void OnStartLocalPlayer ()
+	private void HandleViveControllerDeviceInput (SteamVR_Controller.Device device)
 	{
-		PlayerMaterial.color = _localPlayerColor;
+		if (device == null)
+		{
+			return;
+		}
+
+		// Detect whether the finger is on touchpad
+		if (device.GetTouch (SteamVR_Controller.ButtonMask.Touchpad))
+		{
+			// Read the touchpad values
+			Vector2 touchpad = device.GetAxis (EVRButtonId.k_EButton_SteamVR_Touchpad);
+
+			// Convert the touchpad y value to movement
+			MovePlayer (touchpad.y);
+		}
 	}
 }

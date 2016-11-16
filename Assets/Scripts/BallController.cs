@@ -3,6 +3,9 @@ using System.Collections;
 
 public class BallController : MonoBehaviour
 {
+	[SerializeField]
+	private AudioSource	_audioSource;
+
 	private Vector3		_currentDir;
 	private float 		_currentSpeed;
 	private Rigidbody	_ballRigidbody;
@@ -87,12 +90,18 @@ public class BallController : MonoBehaviour
 
 			// Calculate normalized direction
 			_currentDir = (new Vector3 (x, 0.0f, z)).normalized;
+
+			// Play the bounce sound
+			_audioSource.Play ();
 		}
 		// If the ball collided with a wall, then
 		else if (other.gameObject.CompareTag ("Wall"))
 		{
 			// Invert the z direction
 			_currentDir.z *= -1.0f;
+
+			// Play the bounce sound
+			_audioSource.Play ();
 		}
 
 		// Set the rigidbody velocity vector to reflect the current 

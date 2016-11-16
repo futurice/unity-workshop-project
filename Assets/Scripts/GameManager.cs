@@ -3,7 +3,7 @@ using System.Collections;
 using UnityEngine.Networking;
 using UnityEngine.UI;
 
-public class GameManager : NetworkBehaviour
+public class GameManager : MonoBehaviour
 {
 	public enum GameState
 	{
@@ -21,9 +21,9 @@ public class GameManager : NetworkBehaviour
 		NONE
 	}
 
-	[Header("Network options")]
+	[Header("GUI options")]
 	[SerializeField]
-	private NetworkManager			_networkManager			= null;
+	private Text					_scoreText				= null;
 
 	[Header("Ball options")]
 	[SerializeField]
@@ -39,8 +39,17 @@ public class GameManager : NetworkBehaviour
 
 	private GameState				_currentState			= GameState.NONE;
 	private BallController			_currentBall			= null;
+
 	private int						_leftPlayerScore		= 0;
 	private int						_rightPlayerScore		= 0;
+
+	public BallController CurrentBall
+	{
+		get
+		{
+			return _currentBall;
+		}
+	}
 
 	#region Singleton implementation
 
@@ -89,7 +98,7 @@ public class GameManager : NetworkBehaviour
 
 	#endregion
 
-	#region Event handling
+	#region Game event handling
 
 	public void HandleGameEvent (GameEvent e)
 	{
@@ -109,18 +118,33 @@ public class GameManager : NetworkBehaviour
 
 	private void HandleStartGameEvent ()
 	{
+		// Change the game state and spawn a new ball
 		_currentState = GameState.RUNNING;
 		StartCoroutine (RespawnBall ());
 	}
 
 	private void HandleStopGameEvent ()
 	{
+		// Change the game state and destroy the ball
 		_currentState = GameState.WAITING_FOR_PLAYERS;
 		DestroyBall ();
 	}
 
 	private void HandlePlayerScoredEvent (GameEvent e)
 	{
+		// Check which players' score should be increased and increase it
+		if (e == GameEvent.PLAYER_LEFT_SCORED)
+		{
+			_leftPlayerScore++;
+		}
+		else
+		{
+			_rightPlayerScore++;
+		}
+
+		// Update the score text
+		_scoreText.text = string.Format ("{0}  -  {1}", _leftPlayerScore, _rightPlayerScore);
+
 		// Destroy the current ball
 		DestroyBall ();
 
@@ -130,16 +154,10 @@ public class GameManager : NetworkBehaviour
 
 	#endregion
 
-	private void Update ()
+	private void Start ()
 	{
-		if (_networkManager.numPlayers > 1 && _currentState != GameState.RUNNING)
-		{
-			HandleGameEvent (GameEvent.START_GAME);
-		}
-		else if (_networkManager.numPlayers < 2 && _currentState == GameState.RUNNING)
-		{
-			HandleGameEvent (GameEvent.STOP_GAME);
-		}
+		// Start the game
+		HandleGameEvent (GameEvent.START_GAME);
 	}
 
 	private void DestroyBall ()
@@ -147,7 +165,7 @@ public class GameManager : NetworkBehaviour
 		// Destroy the current ball
 		if (_currentBall != null)
 		{
-			NetworkServer.Destroy (_currentBall.gameObject);
+			Destroy (_currentBall.gameObject);
 		}
 
 		_currentBall = null;
@@ -155,9 +173,8 @@ public class GameManager : NetworkBehaviour
 
 	private void CreateBall ()
 	{
-		// Create a new ball and spawn it across all network clients
+		// Create a new ball
 		GameObject newBall = Instantiate (_ballPrefab, Vector3.zero, Quaternion.identity, _ballContainer) as GameObject;
-		NetworkServer.Spawn (newBall);
 
 		// Store the reference to the ball and initialize the ball
 		_currentBall = newBall.GetComponent<BallController> ();
@@ -166,11 +183,6 @@ public class GameManager : NetworkBehaviour
 
 	private IEnumerator RespawnBall ()
 	{
-		if (!isServer)
-		{
-			yield break;
-		}
-
 		// Wait for the cooldown to finish
 		yield return new WaitForSeconds (_scoreCooldown);
 
