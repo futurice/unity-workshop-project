@@ -161,6 +161,8 @@ public class PlayerController : MonoBehaviour
 
     private GestureRecognizer _recognizer;
 
+    private bool selected = false;
+
     void Awake()
     {
         _recognizer = new GestureRecognizer();
@@ -182,6 +184,17 @@ public class PlayerController : MonoBehaviour
         // First update the head position and view direction
         _headPos = Camera.main.transform.position;
         _viewDir = Camera.main.transform.forward;
+
+        // If we have our piece selected, move it toward where you're looking
+        if (true)
+        {
+            Vector3 headToPaddle = (transform.position - _headPos).normalized;
+
+            if (_viewDir.z != headToPaddle.z)
+            {
+                MovePlayer(_viewDir.z > headToPaddle.z ? 1 : -1);
+            }
+        }
 
         // Create a variable to store a potential hit from the raytracer
         RaycastHit hitInfo;
@@ -211,6 +224,11 @@ public class PlayerController : MonoBehaviour
             _recognizer.CancelGestures();
             _recognizer.StartCapturingGestures();
         }
+    }
+
+    void OnSelect()
+    {
+        selected = !selected;
     }
 
 #endif
