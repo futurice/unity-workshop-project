@@ -178,12 +178,6 @@ Transform:
   - {fileID: 1902812076}
   m_Father: {fileID: 381485227}
   m_RootOrder: 0
---- !u!114 &227988868 stripped
-MonoBehaviour:
-  m_PrefabParentObject: {fileID: 11463128, guid: 4d293c8e162f3874b982baadd71153d2,
-    type: 2}
-  m_PrefabInternal: {fileID: 673986360}
-  m_Script: {fileID: 11500000, guid: d37c2cf88f7c59f4c8cf5d3812568143, type: 3}
 --- !u!1 &340071917
 GameObject:
   m_ObjectHideFlags: 0
@@ -450,12 +444,6 @@ Transform:
   - {fileID: 1537755974}
   m_Father: {fileID: 1556144057}
   m_RootOrder: 0
---- !u!114 &663435400 stripped
-MonoBehaviour:
-  m_PrefabParentObject: {fileID: 11411726, guid: 4d293c8e162f3874b982baadd71153d2,
-    type: 2}
-  m_PrefabInternal: {fileID: 673986360}
-  m_Script: {fileID: 11500000, guid: d37c2cf88f7c59f4c8cf5d3812568143, type: 3}
 --- !u!1001 &673986360
 Prefab:
   m_ObjectHideFlags: 0
@@ -1419,26 +1407,6 @@ Prefab:
       propertyPath: m_RootOrder
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 114000010124451414, guid: 4ece5c02643fc4d9dac7129475876562,
-        type: 2}
-      propertyPath: _leftController
-      value: 
-      objectReference: {fileID: 663435400}
-    - target: {fileID: 114000010124451414, guid: 4ece5c02643fc4d9dac7129475876562,
-        type: 2}
-      propertyPath: _rightController
-      value: 
-      objectReference: {fileID: 227988868}
-    - target: {fileID: 114000010124451414, guid: 4ece5c02643fc4d9dac7129475876562,
-        type: 2}
-      propertyPath: _inputType
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 23000014093885650, guid: 4ece5c02643fc4d9dac7129475876562,
-        type: 2}
-      propertyPath: m_Materials.Array.data[0]
-      value: 
-      objectReference: {fileID: 2100000, guid: d60734169950a411982e1f22148d5716, type: 2}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 4ece5c02643fc4d9dac7129475876562, type: 2}
   m_IsPrefabParent: 0
