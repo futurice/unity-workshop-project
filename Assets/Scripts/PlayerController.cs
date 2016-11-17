@@ -19,24 +19,11 @@ public class PlayerController : MonoBehaviour
 
 	[Header("General options")]
 	[SerializeField]
-	private InputType					_inputType				= InputType.DESKTOP;
-	[SerializeField]
 	private float						_movementSpeed			= 30.0f;
 
 	private Vector3						_playerVelocity			= Vector3.zero;
 	private Rigidbody					_playerRigidbody		= null;
 	private Material					_playerMaterial			= null;
-
-	#if MODE_VIVE
-    [Header("Vive options")]
-    [SerializeField]
-    private SteamVR_TrackedObject		_leftController 		= null;
-    [SerializeField]
-    private SteamVR_TrackedObject 		_rightController 		= null;
-
-    private SteamVR_Controller.Device 	_leftControllerDevice 	= null;
-    private SteamVR_Controller.Device 	_rightControllerDevice 	= null;
-	#endif
 
     private Rigidbody PlayerRigidbody
 	{
@@ -64,61 +51,20 @@ public class PlayerController : MonoBehaviour
 		}
 	}
 
-	#if MODE_VIVE
-    private SteamVR_Controller.Device LeftControllerDevice
-    {
-        get
-        {
-            if (_leftControllerDevice == null)
-            {
-                if (_leftController != null && _leftController.index != SteamVR_TrackedObject.EIndex.None)
-                {
-                    _leftControllerDevice = SteamVR_Controller.Input((int)_leftController.index);
-                }
-            }
-
-            return _leftControllerDevice;
-        }
-    }
-
-    private SteamVR_Controller.Device RightControllerDevice
-    {
-        get
-        {
-            if (_rightControllerDevice == null)
-            {
-                if (_rightController != null && _rightController.index != SteamVR_TrackedObject.EIndex.None)
-                {
-                    _rightControllerDevice = SteamVR_Controller.Input((int)_rightController.index);
-                }
-            }
-
-            return _rightControllerDevice;
-        }
-    }
-	#endif
-
     private void FixedUpdate ()
 	{
 		// Handle different types of user input
-		if (_inputType == InputType.DESKTOP)
-		{
+		#if MODE_DESKTOP
 			// Read the vertical axis - typically up/down arrows or w/s letters
 			float v = Input.GetAxisRaw ("Vertical");
 			MovePlayer (v);
-		}
-		else if (_inputType == InputType.VIVE)
-		{
-			#if MODE_VIVE
+		#elif MODE_VIVE
             // Handle input from both of the vive controllers - right controller overrides the left
             HandleViveControllerDeviceInput (LeftControllerDevice);
             HandleViveControllerDeviceInput (RightControllerDevice);
-			#endif
-        }
-		else if (_inputType == InputType.HOLOLENS)
-		{
+		#elif MODE_HOLOLENS
 			// TODO
-		}
+		#endif
 	}
 
 	private void MovePlayer (float v)
@@ -127,8 +73,51 @@ public class PlayerController : MonoBehaviour
 		_playerVelocity.z = v * _movementSpeed;
 		PlayerRigidbody.velocity = _playerVelocity;
 	}
-
+	
+	#region Vive
 	#if MODE_VIVE
+
+	[Header("Vive options")]
+	[SerializeField]
+	private SteamVR_TrackedObject		_leftController 		= null;
+	[SerializeField]
+	private SteamVR_TrackedObject 		_rightController 		= null;
+
+	private SteamVR_Controller.Device 	_leftControllerDevice 	= null;
+	private SteamVR_Controller.Device 	_rightControllerDevice 	= null;
+
+	private SteamVR_Controller.Device LeftControllerDevice
+	{
+		get
+		{
+			if (_leftControllerDevice == null)
+			{
+				if (_leftController != null && _leftController.index != SteamVR_TrackedObject.EIndex.None)
+				{
+					_leftControllerDevice = SteamVR_Controller.Input((int)_leftController.index);
+				}
+			}
+
+			return _leftControllerDevice;
+		}
+	}
+
+	private SteamVR_Controller.Device RightControllerDevice
+	{
+		get
+		{
+			if (_rightControllerDevice == null)
+			{
+				if (_rightController != null && _rightController.index != SteamVR_TrackedObject.EIndex.None)
+				{
+					_rightControllerDevice = SteamVR_Controller.Input((int)_rightController.index);
+				}
+			}
+
+			return _rightControllerDevice;
+		}
+	}
+
     private void HandleViveControllerDeviceInput(SteamVR_Controller.Device device)
     {
         // If the device is null we can't do anything - return
@@ -147,5 +136,7 @@ public class PlayerController : MonoBehaviour
             MovePlayer (touchpad.y);
         }
     }
+
 	#endif
+	#endregion
 }
