@@ -22,16 +22,16 @@ public class PlayerController : MonoBehaviour
 	private Rigidbody					_playerRigidbody		= null;
 	private Material					_playerMaterial			= null;
 
-	[Header("Vive options")]
-	[SerializeField]
-	private SteamVR_TrackedObject 		_leftController			= null;
-	[SerializeField]
-	private SteamVR_TrackedObject		_rightController		= null;
+    [Header("Vive options")]
+    [SerializeField]
+    private SteamVR_TrackedObject _leftController = null;
+    [SerializeField]
+    private SteamVR_TrackedObject _rightController = null;
 
-	private SteamVR_Controller.Device 	_leftControllerDevice	= null;
-	private SteamVR_Controller.Device 	_rightControllerDevice	= null;
+    private SteamVR_Controller.Device _leftControllerDevice = null;
+    private SteamVR_Controller.Device _rightControllerDevice = null;
 
-	private Rigidbody PlayerRigidbody
+    private Rigidbody PlayerRigidbody
 	{
 		get
 		{
@@ -57,39 +57,39 @@ public class PlayerController : MonoBehaviour
 		}
 	}
 
-	private SteamVR_Controller.Device LeftControllerDevice
-	{
-		get
-		{
-			if (_leftControllerDevice == null)
-			{
-				if (_leftController != null && _leftController.index != SteamVR_TrackedObject.EIndex.None)
-				{
-					_leftControllerDevice = SteamVR_Controller.Input ((int)_leftController.index);
-				}
-			}
+    private SteamVR_Controller.Device LeftControllerDevice
+    {
+        get
+        {
+            if (_leftControllerDevice == null)
+            {
+                if (_leftController != null && _leftController.index != SteamVR_TrackedObject.EIndex.None)
+                {
+                    _leftControllerDevice = SteamVR_Controller.Input((int)_leftController.index);
+                }
+            }
 
-			return _leftControllerDevice;
-		}
-	}
+            return _leftControllerDevice;
+        }
+    }
 
-	private SteamVR_Controller.Device RightControllerDevice
-	{
-		get
-		{
-			if (_rightControllerDevice == null)
-			{
-				if (_rightController != null && _rightController.index != SteamVR_TrackedObject.EIndex.None)
-				{
-					_rightControllerDevice = SteamVR_Controller.Input ((int)_rightController.index);
-				}
-			}
+    private SteamVR_Controller.Device RightControllerDevice
+    {
+        get
+        {
+            if (_rightControllerDevice == null)
+            {
+                if (_rightController != null && _rightController.index != SteamVR_TrackedObject.EIndex.None)
+                {
+                    _rightControllerDevice = SteamVR_Controller.Input((int)_rightController.index);
+                }
+            }
 
-			return _rightControllerDevice;
-		}
-	}
+            return _rightControllerDevice;
+        }
+    }
 
-	private void FixedUpdate ()
+    private void FixedUpdate ()
 	{
 		// Handle different types of user input
 		if (_inputType == InputType.DESKTOP)
@@ -100,10 +100,10 @@ public class PlayerController : MonoBehaviour
 		}
 		else if (_inputType == InputType.VIVE)
 		{
-			// Handle input from both of the vive controllers - right controller overrides the left
-			HandleViveControllerDeviceInput (LeftControllerDevice);
-			HandleViveControllerDeviceInput (RightControllerDevice);
-		}
+            // Handle input from both of the vive controllers - right controller overrides the left
+            HandleViveControllerDeviceInput(LeftControllerDevice);
+            HandleViveControllerDeviceInput(RightControllerDevice);
+        }
 		else if (_inputType == InputType.HOLOLENS)
 		{
 			// TODO
@@ -117,22 +117,22 @@ public class PlayerController : MonoBehaviour
 		PlayerRigidbody.velocity = _playerVelocity;
 	}
 
-	private void HandleViveControllerDeviceInput (SteamVR_Controller.Device device)
-	{
-		// If the device is null we can't do anything - return
-		if (device == null)
-		{
-			return;
-		}
+    private void HandleViveControllerDeviceInput(SteamVR_Controller.Device device)
+    {
+        // If the device is null we can't do anything - return
+        if (device == null)
+        {
+            return;
+        }
 
-		// Detect whether the finger is on touchpad
-		if (device.GetTouch (SteamVR_Controller.ButtonMask.Touchpad))
-		{
-			// Read the touchpad values
-			Vector2 touchpad = device.GetAxis (EVRButtonId.k_EButton_SteamVR_Touchpad);
+        // Detect whether the finger is on touchpad
+        if (device.GetTouch(SteamVR_Controller.ButtonMask.Touchpad))
+        {
+            // Read the touchpad values
+            //Vector2 touchpad = device.GetAxis (EVRButtonId.k_EButton_SteamVR_Touchpad);
 
-			// Convert the touchpad y value to movement
-			MovePlayer (touchpad.y);
-		}
-	}
+            //// Convert the touchpad y value to movement
+            //MovePlayer (touchpad.y);
+        }
+    }
 }
