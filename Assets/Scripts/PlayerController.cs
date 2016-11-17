@@ -1,4 +1,4 @@
-﻿#define MODE_HOLOLENS
+﻿#define MODE_DESKTOP
 
 using UnityEngine;
 using System.Collections;
