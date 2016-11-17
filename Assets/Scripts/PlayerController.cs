@@ -1,4 +1,4 @@
-﻿#define MODE_DESKTOP
+﻿#define MODE_VIVE
 
 using UnityEngine;
 using System.Collections;
@@ -130,7 +130,7 @@ public class PlayerController : MonoBehaviour
         // If the device is null we can't do anything - return
         if (device == null)
         {
-            return;
+            return 0.0f;
         }
 
         // Detect whether the finger is on touchpad
@@ -144,7 +144,7 @@ public class PlayerController : MonoBehaviour
         }
 
 		// If the finger isn't on the touch pad, stop the movement
-		return 0.0f
+		return 0.0f;
     }
 
 #endif
