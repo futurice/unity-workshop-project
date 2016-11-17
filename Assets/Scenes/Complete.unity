@@ -37,7 +37,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.24648549, g: 0.2823301, b: 0.3456741, a: 1}
+  m_IndirectSpecularColor: {r: 0.18053655, g: 0.22601871, b: 0.30718789, a: 1}
 --- !u!157 &3
 LightmapSettings:
   m_ObjectHideFlags: 0
@@ -184,6 +184,34 @@ MonoBehaviour:
     type: 2}
   m_PrefabInternal: {fileID: 673986360}
   m_Script: {fileID: 11500000, guid: d37c2cf88f7c59f4c8cf5d3812568143, type: 3}
+--- !u!1 &340071917
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 340071918}
+  m_Layer: 0
+  m_Name: BallSpawnPoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &340071918
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 340071917}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_Children: []
+  m_Father: {fileID: 636401411}
+  m_RootOrder: 0
 --- !u!1 &356043105
 GameObject:
   m_ObjectHideFlags: 0
@@ -214,7 +242,7 @@ Transform:
   m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
   m_Children: []
   m_Father: {fileID: 636401411}
-  m_RootOrder: 1
+  m_RootOrder: 2
 --- !u!23 &356043107
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -415,6 +443,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children:
+  - {fileID: 340071918}
   - {fileID: 1871038976}
   - {fileID: 356043106}
   - {fileID: 2110940716}
@@ -469,11 +498,11 @@ Prefab:
     - target: {fileID: 3380982, guid: 4d293c8e162f3874b982baadd71153d2, type: 2}
       propertyPath: m_Mesh
       value: 
-      objectReference: {fileID: 1806865571}
+      objectReference: {fileID: 1664668671}
     - target: {fileID: 2348914, guid: 4d293c8e162f3874b982baadd71153d2, type: 2}
       propertyPath: m_Materials.Array.data[0]
       value: 
-      objectReference: {fileID: 718772237}
+      objectReference: {fileID: 1316662889}
     - target: {fileID: 408470, guid: 4d293c8e162f3874b982baadd71153d2, type: 2}
       propertyPath: m_LocalPosition.y
       value: 0.9
@@ -548,35 +577,6 @@ Prefab:
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 55b0d2bf4b5cd4008a8f8c853ca37bb7, type: 2}
   m_IsPrefabParent: 0
---- !u!21 &718772237
-Material:
-  serializedVersion: 6
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_Name: Sprites/Default
-  m_Shader: {fileID: 10753, guid: 0000000000000000f000000000000000, type: 0}
-  m_ShaderKeywords: 
-  m_LightmapFlags: 5
-  m_CustomRenderQueue: -1
-  stringTagMap: {}
-  m_SavedProperties:
-    serializedVersion: 2
-    m_TexEnvs:
-    - first:
-        name: _MainTex
-      second:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    m_Floats:
-    - first:
-        name: PixelSnap
-      second: 0
-    m_Colors:
-    - first:
-        name: _Color
-      second: {r: 1, g: 1, b: 1, a: 1}
 --- !u!1 &1142784083
 GameObject:
   m_ObjectHideFlags: 0
@@ -743,6 +743,35 @@ MonoBehaviour:
     m_VerticalOverflow: 0
     m_LineSpacing: 1
   m_Text: 0  -  0
+--- !u!21 &1316662889
+Material:
+  serializedVersion: 6
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_Name: Sprites/Default
+  m_Shader: {fileID: 10753, guid: 0000000000000000f000000000000000, type: 0}
+  m_ShaderKeywords: 
+  m_LightmapFlags: 5
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  m_SavedProperties:
+    serializedVersion: 2
+    m_TexEnvs:
+    - first:
+        name: _MainTex
+      second:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    m_Floats:
+    - first:
+        name: PixelSnap
+      second: 0
+    m_Colors:
+    - first:
+        name: _Color
+      second: {r: 1, g: 1, b: 1, a: 1}
 --- !u!1 &1537755973
 GameObject:
   m_ObjectHideFlags: 0
@@ -773,7 +802,7 @@ Transform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children: []
   m_Father: {fileID: 636401411}
-  m_RootOrder: 3
+  m_RootOrder: 4
 --- !u!23 &1537755975
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -854,7 +883,7 @@ Transform:
   - {fileID: 1822644459}
   m_Father: {fileID: 0}
   m_RootOrder: 1
---- !u!43 &1806865571
+--- !u!43 &1664668671
 Mesh:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
@@ -1117,7 +1146,7 @@ Transform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children: []
   m_Father: {fileID: 636401411}
-  m_RootOrder: 0
+  m_RootOrder: 1
 --- !u!64 &1871038977
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -1197,6 +1226,7 @@ MonoBehaviour:
   _ballContainer: {fileID: 1556144057}
   _ballPrefab: {fileID: 1000013617506720, guid: bb15e060bcd0747a8b037bbec425d5ae,
     type: 2}
+  _ballSpawnPoint: {fileID: 340071918}
   _initialBallSpeed: 0.75
   _scoreCooldown: 2
 --- !u!4 &1897931030
@@ -1301,7 +1331,7 @@ Transform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children: []
   m_Father: {fileID: 636401411}
-  m_RootOrder: 2
+  m_RootOrder: 3
 --- !u!23 &2110940717
 MeshRenderer:
   m_ObjectHideFlags: 0

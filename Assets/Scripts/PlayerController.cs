@@ -1,4 +1,4 @@
-﻿#define MODE_DESKTOP
+﻿#define MODE_HOLOLENS
 
 using UnityEngine;
 using System.Collections;
@@ -6,6 +6,10 @@ using UnityEngine.Networking;
 
 #if MODE_VIVE
 using Valve.VR;
+#endif
+
+#if MODE_HOLOLENS
+using UnityEngine.VR.WSA.Input;
 #endif
 
 public class PlayerController : MonoBehaviour
@@ -53,18 +57,19 @@ public class PlayerController : MonoBehaviour
 
     private void FixedUpdate ()
 	{
-		// Handle different types of user input
-		#if MODE_DESKTOP
+        // Handle different types of user input
+#if MODE_DESKTOP
 			// Read the vertical axis - typically up/down arrows or w/s letters
 			float v = Input.GetAxisRaw ("Vertical");
 			MovePlayer (v);
-		#elif MODE_VIVE
+#elif MODE_VIVE
             // Handle input from both of the vive controllers - right controller overrides the left
             HandleViveControllerDeviceInput (LeftControllerDevice);
             HandleViveControllerDeviceInput (RightControllerDevice);
-		#elif MODE_HOLOLENS
-			// TODO
-		#endif
+#elif MODE_HOLOLENS
+        // Handle the gaze based input from the Hololens
+        HandleHololensControls();
+#endif
 	}
 
 	private void MovePlayer (float v)
@@ -73,9 +78,9 @@ public class PlayerController : MonoBehaviour
 		_playerVelocity.z = v * _movementSpeed;
 		PlayerRigidbody.velocity = _playerVelocity;
 	}
-	
-	#region Vive
-	#if MODE_VIVE
+
+    #region Vive
+#if MODE_VIVE
 
 	[Header("Vive options")]
 	[SerializeField]
@@ -137,6 +142,77 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-	#endif
-	#endregion
+#endif
+#endregion
+
+#region Hololens
+#if MODE_HOLOLENS
+
+    [SerializeField]
+    private Transform _cursorTransform;
+    [SerializeField]
+    private MeshRenderer _cursorRender;
+
+    private GameObject _focusedObject;
+    private GameObject _oldFocus;
+
+    private Vector3 _headPos;
+    private Vector3 _viewDir;
+
+    private GestureRecognizer _recognizer;
+
+    void Awake()
+    {
+        _recognizer = new GestureRecognizer();
+        _recognizer.TappedEvent += (source, tapCount, ray) =>
+        {
+            if (_focusedObject != null)
+            {
+                _focusedObject.SendMessageUpwards("OnSelect");
+            }
+        };
+
+        _recognizer.StartCapturingGestures();
+    }
+
+    void HandleHololensControls()
+    {
+        GameObject oldFocus = _focusedObject;
+
+        // First update the head position and view direction
+        _headPos = Camera.main.transform.position;
+        _viewDir = Camera.main.transform.forward;
+
+        // Create a variable to store a potential hit from the raytracer
+        RaycastHit hitInfo;
+
+        // Fire a ray from the position of the head in the direction we are viewing, and see if it hits anything
+        bool hit = Physics.Raycast(_headPos, _viewDir, out hitInfo);
+
+        // If we hit an object, we want to turn on the rendering of the cursor at the impact point
+        if (hit)
+        {
+            _cursorRender.enabled = true;
+            // Set the cursor at the hit position
+            _cursorTransform.position = hitInfo.point;
+            _cursorTransform.rotation = Quaternion.FromToRotation(Vector3.up, hitInfo.normal);
+
+            _focusedObject = hitInfo.collider.gameObject;
+        }
+        // Not hit so we want to turn off the rendering of the cursor
+        else
+        {
+            _cursorRender.enabled = false;
+            _focusedObject = null;
+        }
+
+        if (_focusedObject != _oldFocus)
+        {
+            _recognizer.CancelGestures();
+            _recognizer.StartCapturingGestures();
+        }
+    }
+
+#endif
+#endregion
 }

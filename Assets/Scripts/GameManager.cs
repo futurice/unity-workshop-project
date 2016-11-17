@@ -30,6 +30,8 @@ public class GameManager : MonoBehaviour
 	private Transform				_ballContainer			= null;
 	[SerializeField]
 	private GameObject				_ballPrefab				= null;
+    [SerializeField]
+    private Transform               _ballSpawnPoint         = null;
 	[SerializeField]
 	private float					_initialBallSpeed		= 15.0f;
 
@@ -174,7 +176,7 @@ public class GameManager : MonoBehaviour
 	private void CreateBall ()
 	{
 		// Create a new ball
-		GameObject newBall = Instantiate (_ballPrefab, Vector3.zero, Quaternion.identity, _ballContainer) as GameObject;
+		GameObject newBall = Instantiate (_ballPrefab, _ballSpawnPoint.position, Quaternion.identity, _ballContainer) as GameObject;
 
 		// Store the reference to the ball and initialize the ball
 		_currentBall = newBall.GetComponent<BallController> ();
