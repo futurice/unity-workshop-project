@@ -91,15 +91,16 @@ public class PlayerController : MonoBehaviour
 
 	private void FixedUpdate ()
 	{
+		// Handle different types of user input
 		if (_inputType == InputType.DESKTOP)
 		{
-			// Get the movement on the vertical axis and convert that to
-			// movement speed of the Rigidbody
+			// Read the vertical axis - typically up/down arrows or w/s letters
 			float v = Input.GetAxisRaw ("Vertical");
 			MovePlayer (v);
 		}
 		else if (_inputType == InputType.VIVE)
 		{
+			// Handle input from both of the vive controllers - right controller overrides the left
 			HandleViveControllerDeviceInput (LeftControllerDevice);
 			HandleViveControllerDeviceInput (RightControllerDevice);
 		}
@@ -111,12 +112,14 @@ public class PlayerController : MonoBehaviour
 
 	private void MovePlayer (float v)
 	{
+		// Convert the press value to velocity
 		_playerVelocity.z = v * _movementSpeed;
 		PlayerRigidbody.velocity = _playerVelocity;
 	}
 
 	private void HandleViveControllerDeviceInput (SteamVR_Controller.Device device)
 	{
+		// If the device is null we can't do anything - return
 		if (device == null)
 		{
 			return;

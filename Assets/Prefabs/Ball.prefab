@@ -262,6 +262,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _audioSource: {fileID: 82000013680892438}
+  _bounceParticleSystem: {fileID: 0}
 --- !u!135 &135000012716588332
 SphereCollider:
   m_ObjectHideFlags: 1
