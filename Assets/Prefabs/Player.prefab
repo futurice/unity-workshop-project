@@ -57,7 +57,7 @@ MeshRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_Materials:
-  - {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: d60734169950a411982e1f22148d5716, type: 2}
   m_SubsetIndices: 
   m_StaticBatchRoot: {fileID: 0}
   m_ProbeAnchor: {fileID: 0}
@@ -118,6 +118,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eca15e0239fc64321adaeeb3a0b3656b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _inputAxis: Vertical
   _movementSpeed: 1.5
-  _localPlayerColor: {r: 0, g: 0, b: 1, a: 1}
