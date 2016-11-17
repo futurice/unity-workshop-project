@@ -1,7 +1,12 @@
-﻿using UnityEngine;
+﻿#define MODE_DESKTOP
+
+using UnityEngine;
 using System.Collections;
 using UnityEngine.Networking;
+
+#if MODE_VIVE
 using Valve.VR;
+#endif
 
 public class PlayerController : MonoBehaviour
 {
@@ -22,14 +27,16 @@ public class PlayerController : MonoBehaviour
 	private Rigidbody					_playerRigidbody		= null;
 	private Material					_playerMaterial			= null;
 
+	#if MODE_VIVE
     [Header("Vive options")]
     [SerializeField]
-    private SteamVR_TrackedObject _leftController = null;
+    private SteamVR_TrackedObject		_leftController 		= null;
     [SerializeField]
-    private SteamVR_TrackedObject _rightController = null;
+    private SteamVR_TrackedObject 		_rightController 		= null;
 
-    private SteamVR_Controller.Device _leftControllerDevice = null;
-    private SteamVR_Controller.Device _rightControllerDevice = null;
+    private SteamVR_Controller.Device 	_leftControllerDevice 	= null;
+    private SteamVR_Controller.Device 	_rightControllerDevice 	= null;
+	#endif
 
     private Rigidbody PlayerRigidbody
 	{
@@ -57,6 +64,7 @@ public class PlayerController : MonoBehaviour
 		}
 	}
 
+	#if MODE_VIVE
     private SteamVR_Controller.Device LeftControllerDevice
     {
         get
@@ -88,6 +96,7 @@ public class PlayerController : MonoBehaviour
             return _rightControllerDevice;
         }
     }
+	#endif
 
     private void FixedUpdate ()
 	{
@@ -100,9 +109,11 @@ public class PlayerController : MonoBehaviour
 		}
 		else if (_inputType == InputType.VIVE)
 		{
+			#if MODE_VIVE
             // Handle input from both of the vive controllers - right controller overrides the left
-            HandleViveControllerDeviceInput(LeftControllerDevice);
-            HandleViveControllerDeviceInput(RightControllerDevice);
+            HandleViveControllerDeviceInput (LeftControllerDevice);
+            HandleViveControllerDeviceInput (RightControllerDevice);
+			#endif
         }
 		else if (_inputType == InputType.HOLOLENS)
 		{
@@ -117,6 +128,7 @@ public class PlayerController : MonoBehaviour
 		PlayerRigidbody.velocity = _playerVelocity;
 	}
 
+	#if MODE_VIVE
     private void HandleViveControllerDeviceInput(SteamVR_Controller.Device device)
     {
         // If the device is null we can't do anything - return
@@ -129,10 +141,11 @@ public class PlayerController : MonoBehaviour
         if (device.GetTouch(SteamVR_Controller.ButtonMask.Touchpad))
         {
             // Read the touchpad values
-            //Vector2 touchpad = device.GetAxis (EVRButtonId.k_EButton_SteamVR_Touchpad);
+           	Vector2 touchpad = device.GetAxis (EVRButtonId.k_EButton_SteamVR_Touchpad);
 
-            //// Convert the touchpad y value to movement
-            //MovePlayer (touchpad.y);
+            // Convert the touchpad y value to movement
+            MovePlayer (touchpad.y);
         }
     }
+	#endif
 }
