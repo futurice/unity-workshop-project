@@ -4,11 +4,11 @@ using System.Collections;
 public class BallController : MonoBehaviour
 {
 	[SerializeField]
-	private AudioSource	_audioSource;
+	private AudioSource	_audioSource;		// Reference to the audio source to play the bounce sound
 
-	private Vector3		_currentDir;
-	private float 		_currentSpeed;
-	private Rigidbody	_ballRigidbody;
+	private Vector3		_currentDir;		// Current direction of the ball
+	private float 		_currentSpeed;		// Current speed of the ball
+	private Rigidbody	_ballRigidbody;		// Cached reference to the rigidbody of the ball
 
 	private Rigidbody BallRigidbody
 	{

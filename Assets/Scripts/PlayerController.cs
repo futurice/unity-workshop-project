@@ -23,15 +23,12 @@ public class PlayerController : MonoBehaviour
 
 	[Header("General options")]
 	[SerializeField]
-	private float						_movementSpeed			= 30.0f;
+	private float						_movementSpeed			= 1.5f;			// How fast should the player move
 
-	private Vector3						_playerVelocity			= Vector3.zero;
-	private Rigidbody					_playerRigidbody		= null;
-	private Material					_playerMaterial			= null;
-    [SerializeField]
-    private Color                       _inactiveColor;
-    [SerializeField]
-    private Color                       _activeColor;
+	private Vector3						_playerVelocity			= Vector3.zero;	// Current player velocity
+	private Rigidbody					_playerRigidbody		= null;			// Cached reference to the rigidbody of the player
+	private Material					_playerMaterial			= null;			// Cached reference to the player material
+
 
     private Rigidbody PlayerRigidbody
 	{
@@ -89,12 +86,12 @@ public class PlayerController : MonoBehaviour
 
 	[Header("Vive options")]
 	[SerializeField]
-	private SteamVR_TrackedObject		_leftController 		= null;
+	private SteamVR_TrackedObject		_leftController 		= null;		// The VR tracked object of the left Vive controller
 	[SerializeField]
-	private SteamVR_TrackedObject 		_rightController 		= null;
+	private SteamVR_TrackedObject 		_rightController 		= null;		// The VR tracked object of the right Vive controller
 
-	private SteamVR_Controller.Device 	_leftControllerDevice 	= null;
-	private SteamVR_Controller.Device 	_rightControllerDevice 	= null;
+	private SteamVR_Controller.Device 	_leftControllerDevice 	= null;		// The controller object of the left controller
+	private SteamVR_Controller.Device 	_rightControllerDevice 	= null;		// The controller object of the right controller
 
 	private SteamVR_Controller.Device LeftControllerDevice
 	{
@@ -137,7 +134,7 @@ public class PlayerController : MonoBehaviour
         }
 
         // Detect whether the finger is on touchpad
-        if (device.GetTouch(SteamVR_Controller.ButtonMask.Touchpad))
+        if (device.GetTouch (SteamVR_Controller.ButtonMask.Touchpad))
         {
             // Read the touchpad values
            	Vector2 touchpad = device.GetAxis (EVRButtonId.k_EButton_SteamVR_Touchpad);
@@ -155,24 +152,28 @@ public class PlayerController : MonoBehaviour
 
 #region Hololens
 #if MODE_HOLOLENS
-
+	[SerializeField]
+	private Color               _inactiveColor		= Color.blue;	// Color of the player when the player is not selected
+	[SerializeField]
+	private Color 				_activeColor		= Color.green;	// Color of the player when the player is selected
     [SerializeField]
-    private Transform       _cursorTransform;   // The transform of the cursor contains its position, rotation, and scale
+    private Transform       	_cursorTransform;   				// The transform of the cursor contains its position, rotation, and scale
     [SerializeField]
-    private MeshRenderer    _cursorRender;      // The component that actually draws the cursor. We can use it to turn on and off the drawing of the cursor
+    private MeshRenderer    	_cursorRender;   			  	 	// The component that actually draws the cursor. We can use it to turn on and off the drawing of the cursor
 
-    private GameObject      _focusedObject;     // The object we are currently targeting with our gaze
+    private GameObject      	_focusedObject;     				// The object we are currently targeting with our gaze
 
-    private Vector3         _headPos;           // The current position of the Hololens, i.e. our head, in 3D space
-    private Vector3         _viewDir;           // The direction of our gaze in 3D space
+    private Vector3         	_headPos;           				// The current position of the Hololens, i.e. our head, in 3D space
+    private Vector3         	_viewDir;           				// The direction of our gaze in 3D space
 
-    private GestureRecognizer _recognizer;      // Object that handles our gestures for the hololens
+    private GestureRecognizer 	_recognizer;      					// Object that handles our gestures for the hololens
 
-    private bool selected = false;              // If we have our paddle selected or not
+    private bool 				selected 			= false;    	// If we have our paddle selected or not
 
-    void Awake()
+    private void Awake ()
     {
-        _recognizer = new GestureRecognizer();
+        _recognizer = new GestureRecognizer ();
+
         _recognizer.TappedEvent += (source, tapCount, ray) =>
         {
             // If we are looking at the paddle, select/unselect it and change its color
@@ -183,10 +184,10 @@ public class PlayerController : MonoBehaviour
             }
         };
 
-        _recognizer.StartCapturingGestures();
+        _recognizer.StartCapturingGestures ();
     }
 
-    void HandleHololensControls()
+    private void HandleHololensControls ()
     {
         // First update the head position and view direction
         _headPos = Camera.main.transform.position;
