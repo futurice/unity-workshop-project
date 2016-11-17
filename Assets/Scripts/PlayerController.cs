@@ -28,6 +28,10 @@ public class PlayerController : MonoBehaviour
 	private Vector3						_playerVelocity			= Vector3.zero;
 	private Rigidbody					_playerRigidbody		= null;
 	private Material					_playerMaterial			= null;
+    [SerializeField]
+    private Color                       _inactiveColor;
+    [SerializeField]
+    private Color                       _activeColor;
 
     private Rigidbody PlayerRigidbody
 	{
@@ -149,28 +153,29 @@ public class PlayerController : MonoBehaviour
 #if MODE_HOLOLENS
 
     [SerializeField]
-    private Transform _cursorTransform;
+    private Transform       _cursorTransform;   // The transform of the cursor contains its position, rotation, and scale
     [SerializeField]
-    private MeshRenderer _cursorRender;
+    private MeshRenderer    _cursorRender;      // The component that actually draws the cursor. We can use it to turn on and off the drawing of the cursor
 
-    private GameObject _focusedObject;
-    private GameObject _oldFocus;
+    private GameObject      _focusedObject;     // The object we are currently targeting with our gaze
 
-    private Vector3 _headPos;
-    private Vector3 _viewDir;
+    private Vector3         _headPos;           // The current position of the Hololens, i.e. our head, in 3D space
+    private Vector3         _viewDir;           // The direction of our gaze in 3D space
 
-    private GestureRecognizer _recognizer;
+    private GestureRecognizer _recognizer;      // Object that handles our gestures for the hololens
 
-    private bool selected = false;
+    private bool selected = false;              // If we have our paddle selected or not
 
     void Awake()
     {
         _recognizer = new GestureRecognizer();
         _recognizer.TappedEvent += (source, tapCount, ray) =>
         {
-            if (_focusedObject != null)
+            // If we are looking at the paddle, select/unselect it and change its color
+            if (_focusedObject != null && _focusedObject == gameObject)
             {
-                _focusedObject.SendMessageUpwards("OnSelect");
+                selected = !selected;
+                PlayerMaterial.color = selected ? _activeColor : _inactiveColor;
             }
         };
 
@@ -179,21 +184,29 @@ public class PlayerController : MonoBehaviour
 
     void HandleHololensControls()
     {
-        GameObject oldFocus = _focusedObject;
-
         // First update the head position and view direction
         _headPos = Camera.main.transform.position;
         _viewDir = Camera.main.transform.forward;
 
-        // If we have our piece selected, move it toward where you're looking
-        if (true)
+        // If we have our paddle selected, move it toward where you're looking
+        if (selected)
         {
+            // We calculate the unit vector pointing from the head to the paddle
             Vector3 headToPaddle = (transform.position - _headPos).normalized;
 
+            // If the above direction is not the same as the view direction, move the paddle
             if (_viewDir.z != headToPaddle.z)
             {
+                // This isn't 100% exact, but works as a rough approximation
+                // If the z component of the view direction is larger than the direction to the paddle,
+                // move the paddle along the positive z-axis, reduce this difference
                 MovePlayer(_viewDir.z > headToPaddle.z ? 1 : -1);
             }
+        }
+        else
+        {
+            // Make sure the paddle is still, since it's not selected
+            MovePlayer(0);
         }
 
         // Create a variable to store a potential hit from the raytracer
@@ -218,17 +231,6 @@ public class PlayerController : MonoBehaviour
             _cursorRender.enabled = false;
             _focusedObject = null;
         }
-
-        if (_focusedObject != _oldFocus)
-        {
-            _recognizer.CancelGestures();
-            _recognizer.StartCapturingGestures();
-        }
-    }
-
-    void OnSelect()
-    {
-        selected = !selected;
     }
 
 #endif

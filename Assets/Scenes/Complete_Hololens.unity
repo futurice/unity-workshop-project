@@ -1236,6 +1236,46 @@ Prefab:
       propertyPath: _cursorRender
       value: 
       objectReference: {fileID: 252155449}
+    - target: {fileID: 114000010124451414, guid: 4ece5c02643fc4d9dac7129475876562,
+        type: 2}
+      propertyPath: _inactiveColor.r
+      value: 0.24313727
+      objectReference: {fileID: 0}
+    - target: {fileID: 114000010124451414, guid: 4ece5c02643fc4d9dac7129475876562,
+        type: 2}
+      propertyPath: _inactiveColor.g
+      value: 0.49411768
+      objectReference: {fileID: 0}
+    - target: {fileID: 114000010124451414, guid: 4ece5c02643fc4d9dac7129475876562,
+        type: 2}
+      propertyPath: _inactiveColor.b
+      value: 0.8588236
+      objectReference: {fileID: 0}
+    - target: {fileID: 114000010124451414, guid: 4ece5c02643fc4d9dac7129475876562,
+        type: 2}
+      propertyPath: _activeColor.r
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 114000010124451414, guid: 4ece5c02643fc4d9dac7129475876562,
+        type: 2}
+      propertyPath: _activeColor.g
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114000010124451414, guid: 4ece5c02643fc4d9dac7129475876562,
+        type: 2}
+      propertyPath: _activeColor.b
+      value: 0.048275948
+      objectReference: {fileID: 0}
+    - target: {fileID: 114000010124451414, guid: 4ece5c02643fc4d9dac7129475876562,
+        type: 2}
+      propertyPath: _activeColor.a
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114000010124451414, guid: 4ece5c02643fc4d9dac7129475876562,
+        type: 2}
+      propertyPath: _inactiveColor.a
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 4ece5c02643fc4d9dac7129475876562, type: 2}
   m_IsPrefabParent: 0
