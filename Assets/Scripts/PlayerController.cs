@@ -59,16 +59,17 @@ public class PlayerController : MonoBehaviour
 	{
         // Handle different types of user input
 #if MODE_DESKTOP
-			// Read the vertical axis - typically up/down arrows or w/s letters
-			float v = Input.GetAxisRaw ("Vertical");
-			MovePlayer (v);
+		// Read the vertical axis - typically up/down arrows or w/s letters
+		float v = Input.GetAxisRaw ("Vertical");
+		MovePlayer (v);
 #elif MODE_VIVE
-            // Handle input from both of the vive controllers - right controller overrides the left
-            HandleViveControllerDeviceInput (LeftControllerDevice);
-            HandleViveControllerDeviceInput (RightControllerDevice);
+        // Handle input from both of the vive controllers - select the maximum between the controllers
+        float leftControllerMovement = GetViveControllerDeviceInput (LeftControllerDevice);
+        float rightControllerMovement = GetViveControllerDeviceInput (RightControllerDevice);
+		MovePlayer (Mathf.Max (leftControllerMovement, rightControllerMovement));	
 #elif MODE_HOLOLENS
         // Handle the gaze based input from the Hololens
-        HandleHololensControls();
+        HandleHololensControls ();
 #endif
 	}
 
@@ -79,7 +80,7 @@ public class PlayerController : MonoBehaviour
 		PlayerRigidbody.velocity = _playerVelocity;
 	}
 
-    #region Vive
+#region Vive
 #if MODE_VIVE
 
 	[Header("Vive options")]
@@ -123,7 +124,7 @@ public class PlayerController : MonoBehaviour
 		}
 	}
 
-    private void HandleViveControllerDeviceInput(SteamVR_Controller.Device device)
+    private float GetViveControllerDeviceInput (SteamVR_Controller.Device device)
     {
         // If the device is null we can't do anything - return
         if (device == null)
@@ -138,8 +139,11 @@ public class PlayerController : MonoBehaviour
            	Vector2 touchpad = device.GetAxis (EVRButtonId.k_EButton_SteamVR_Touchpad);
 
             // Convert the touchpad y value to movement
-            MovePlayer (touchpad.y);
+            return touchpad.y;
         }
+
+		// If the finger isn't on the touch pad, stop the movement
+		return 0.0f
     }
 
 #endif
